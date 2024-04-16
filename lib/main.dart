@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:miniproj/login/login.dart';
 import 'package:miniproj/login/signup.dart';
+import 'package:miniproj/homescreen/home.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -41,7 +42,7 @@ class MyHomePage extends StatelessWidget {
           )
         ),
       ),
-      body: Signup()
+      body: Home()
     );
   }
 }
