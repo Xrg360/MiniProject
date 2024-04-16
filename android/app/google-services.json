@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "470527456424",
+    "project_id": "xrg-mini-proj",
+    "storage_bucket": "xrg-mini-proj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470527456424:android:15de861c711f8421a77e9d",
+        "android_client_info": {
+          "package_name": "com.example.miniproj"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCac8qptuCznJJ1gJafBBJPq_ANqUC-xnQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
