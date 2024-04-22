@@ -27,25 +27,32 @@ class _NearbyUserState extends State<NearbyUser> {
       throw 'Could not launch $url';
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: StreamBuilder<DataSnapshot>(
           stream: _dataSnapshot.map((event) => event.snapshot),
-          builder: (BuildContext context, AsyncSnapshot<DataSnapshot> snapshot) {
+          builder:
+              (BuildContext context, AsyncSnapshot<DataSnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              Map<dynamic, dynamic> values = snapshot.data!.value as Map<dynamic, dynamic>;
-              double latitude = values['location']['latitude'];
-              double longitude = values['location']['longitude'];
-              return ElevatedButton(
-                onPressed: () => _launchMaps(latitude, longitude),
-                child: Text('Navigate to ${values['name']}'),
-              );
+              Map<dynamic, dynamic>? values =
+                  snapshot.data!.value as Map<dynamic, dynamic>?;
+              if (values == null) {
+                return Text('No value');
+              } else {
+                double latitude = values['location']['latitude'];
+                double longitude = values['location']['longitude'];
+                return ElevatedButton(
+                  onPressed: () => _launchMaps(latitude, longitude),
+                  child: Text('Navigate to ${values['name']}'),
+                );
+              }
             }
           },
         ),
