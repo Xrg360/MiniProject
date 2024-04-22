@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:miniproj/help.dart';
 import 'package:miniproj/homescreen/home.dart';
 import 'package:miniproj/login/signup.dart';
-
+import 'package:miniproj/nearby.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
             Spacer(),
             TextField(
               controller: _emailController,
-              decoration:  InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -35,10 +37,12 @@ class _LoginPageState extends State<LoginPage> {
                 suffixText: "@gmail.com",
               ),
             ),
-            SizedBox(height: 12,),
+            SizedBox(
+              height: 12,
+            ),
             TextField(
               controller: _passwordController,
-              decoration:  InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -50,7 +54,9 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Signup()),
+                  MaterialPageRoute(builder: (context) => Scaffold(
+                    body: Signup(),
+                  )),
                 );
               },
               style: TextButton.styleFrom(
@@ -61,35 +67,55 @@ class _LoginPageState extends State<LoginPage> {
             Spacer(),
             ElevatedButton(
               onPressed: () async {
+                if (_emailController.text.isEmpty ||
+                    _passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill in all fields')),
+                  );
+                  return;
+                }
+
                 try {
-                  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  UserCredential userCredential =
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
                     email: '${_emailController.text}@gmail.com',
                     password: _passwordController.text,
                   );
-                  print(_emailController.text);
-                  // ignore: avoid_print
-                  print('Logged in successfully');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Home()),
-                  );
-                  // ignore: avoid_print
-                  print(userCredential.user);
+
+                  // Get the user's ID
+                  final String userId = userCredential.user!.uid;
+
+                  // Get a reference to the user's document in the 'users' collection
+                  DocumentReference userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+
+                  // Get the user's data
+                  DocumentSnapshot userData = await userDoc.get();
+
+                  // Check the 'isAmbulance' field and navigate to the appropriate screen
+                  if (userData['isAmbulance']) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NearbyUser()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home()),
+                    );
+                  }
                 } catch (e) {
-                  print(_emailController.text);
-                  // ignore: avoid_print
-                  print('Login failed: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Login failed: $e')));
                 }
               },
               child: const Text('Login'),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 60),
-
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ],

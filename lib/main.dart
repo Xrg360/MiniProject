@@ -1,15 +1,25 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:miniproj/help.dart';
 import 'package:miniproj/login/login.dart';
 import 'package:miniproj/login/signup.dart';
 import 'package:miniproj/homescreen/home.dart';
+import 'package:miniproj/nearby.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
+  
+  final app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseDatabase.instanceFor(
+    app: app,
+    databaseURL: 'https://xrg-mini-proj-default-rtdb.firebaseio.com',
+  );
+  Permission.location.request();
   runApp(const MyApp());
 }
 
@@ -42,7 +52,9 @@ class MyHomePage extends StatelessWidget {
           )
         ),
       ),
-      body: Home()
+      body: LoginPage()
     );
   }
 }
+
+
