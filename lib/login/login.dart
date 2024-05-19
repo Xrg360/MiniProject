@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:miniproj/Ambulance.dart';
 import 'package:miniproj/help.dart';
 import 'package:miniproj/homescreen/home.dart';
 import 'package:miniproj/login/signup.dart';
@@ -95,12 +96,14 @@ class _LoginPageState extends State<LoginPage> {
                   if (userData['isAmbulance']) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => NearbyUser()),
+                      MaterialPageRoute(builder: (context) => AmbulanceInterface()),
                     );
                   } else {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Home()),
+                      
+                      MaterialPageRoute(
+                        builder: (context) => Home()),
                     );
                   }
                 } catch (e) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:miniproj/Ambulance.dart';
 import 'package:miniproj/homescreen/home.dart';
 import 'package:miniproj/login/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -138,10 +139,17 @@ class _SignupState extends State<Signup> {
                   print(_emailController.text);
                   // ignore: avoid_print
                   print('Logged in successfully');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Home()),
-                  );
+                  if (_isAmbulance) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AmbulanceInterface()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Home()),
+                    );
+                  }
                   // ignore: avoid_print
                   print(userCredential.user);
                 } catch (e) {

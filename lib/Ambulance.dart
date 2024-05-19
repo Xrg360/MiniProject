@@ -3,16 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NearbyUser extends StatefulWidget {
-  const NearbyUser({super.key});
+class AmbulanceInterface extends StatefulWidget {
+  const AmbulanceInterface({super.key});
 
   @override
-  State<NearbyUser> createState() => _NearbyUserState();
+  State<AmbulanceInterface> createState() => _AmbulanceInterfaceState();
 }
 
-class _NearbyUserState extends State<NearbyUser> {
+class _AmbulanceInterfaceState extends State<AmbulanceInterface> {
   late Stream<DatabaseEvent> _dataSnapshot;
 
   @override
@@ -32,6 +33,7 @@ class _NearbyUserState extends State<NearbyUser> {
 
   @override
   Widget build(BuildContext context) {
+    DatabaseReference db = FirebaseDatabase.instance.ref('/help');
     return Scaffold(
       body: Center(
         child: StreamBuilder<DataSnapshot>(
@@ -100,9 +102,7 @@ class _NearbyUserState extends State<NearbyUser> {
                             Spacer(),
                             Text('Vehicle details: $vehicleDetails'),
                             Text('Address details: $address'),
-                            Text(
-                                'Emergency Services arriving in: ${values['eta']} sec'),
-                            Text('Nearest Hospital: Amritha Hospital '),
+                            Text('Nearest Hospital: Amritha Hospital'),
                             SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () => _launchMaps(latitude, longitude),
@@ -120,7 +120,45 @@ class _NearbyUserState extends State<NearbyUser> {
                                 foregroundColor:
                                     MaterialStateProperty.all(Colors.white),
                                 minimumSize: MaterialStateProperty.all(Size(
-                                    MediaQuery.of(context).size.width, 80)),
+                                    MediaQuery.of(context).size.width, 60)),
+                                textStyle: MaterialStateProperty.all(
+                                    TextStyle(fontSize: 20)),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: () async {
+                                Position currentPosition =
+                                    await Geolocator.getCurrentPosition(
+                                        desiredAccuracy: LocationAccuracy.high);
+                                double distanceInMeters =
+                                    Geolocator.distanceBetween(
+                                        currentPosition.latitude,
+                                        currentPosition.longitude,
+                                        latitude,
+                                        longitude);
+
+                                // Assuming an average speed of 50 km/h
+                                double speed = 50;
+                                double eta = distanceInMeters / (speed * 1000) * 60 * 60;
+
+                                // Update Realtime Database
+                                db.update({'eta': eta.toInt()});
+                              },
+                              child: Text('Accept'),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                  ),
+                                ),
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.black),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.white),
+                                minimumSize: MaterialStateProperty.all(Size(
+                                    MediaQuery.of(context).size.width, 60)),
                                 textStyle: MaterialStateProperty.all(
                                     TextStyle(fontSize: 20)),
                               ),
